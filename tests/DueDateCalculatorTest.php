@@ -37,7 +37,7 @@ final class DueDateCalculatorTest extends TestCase
     }
 
     public function testIsWorkingDays(){
-        //prepare
+
         $dueDateCalculator = new DueDateCalculator();
 
         $isWorkingDay = $dueDateCalculator->isWorkingDay(new DateTime('2021-03-01 14:00:00'));
@@ -66,6 +66,64 @@ final class DueDateCalculatorTest extends TestCase
 
     }
 
+    public static function IsWorkingdayTestData()
+    {
+        return array(
+            array(true, '2021-03-01 14:00:00'),
+            array(true, '2021-03-02 14:00:00'),
+            array(true, '2021-03-03 14:00:00'),
+            array(true, '2021-03-04 14:00:00'),
+            array(true, '2021-03-05 14:00:00'),
+            array(false, '2021-03-06 14:00:00'),
+            array(false, '2021-03-07 14:00:00'),
+            array(true, '2021-03-08 14:00:00'),
+            array(true, '2021-03-09 14:00:00')
+        );
+    }
 
+    /**
+     * @dataProvider IsWorkingdayTestData 
+    */
+    public function testIsWorkingDays_withParameters($result, $datetime){
+        
+        $dueDateCalculator = new DueDateCalculator();
+
+        $isWorkingDay = $dueDateCalculator->isWorkingDay(new DateTime($datetime));
+        $this->assertEquals($result, $isWorkingDay);
+    }
+
+
+    public function testIsWorkingHours_WhenDateIsWeekday_ShoulReturnTrue(){
+        //prepare
+        $dueDateCalculator = new DueDateCalculator();
+        //act
+        $isWorkingHours = $dueDateCalculator->isWorkingHours(new DateTime('2021-03-05 14:00:00'));
+        //assert
+        $this->assertEquals(true, $isWorkingHours);
+    }
+    public function testIsWorkingHours_WhenDateIsWeekday_ShoulReturnFalse(){
+        //prepare
+        $dueDateCalculator = new DueDateCalculator();
+        //act
+        $isWorkingHours = $dueDateCalculator->isWorkingHours(new DateTime('2021-03-06 14:00:00'));
+        //assert
+        $this->assertEquals(false, $isWorkingHours);
+    }
+    public function testIsWorkingHours_WhenDateIsWeekdayAndHourInWorkinghours_ShoulReturnTrue(){
+        //prepare
+        $dueDateCalculator = new DueDateCalculator();
+        //act
+        $isWorkingHours = $dueDateCalculator->isWorkingHours(new DateTime('2021-03-05 14:00:00'));
+        //assert
+        $this->assertEquals(true, $isWorkingHours);
+    }
+    public function testIsWorkingHours_WhenDateIsWeekdayAndHourOutWorkinghours_ShoulReturnFalse(){
+        //prepare
+        $dueDateCalculator = new DueDateCalculator();
+        //act
+        $isWorkingHours = $dueDateCalculator->isWorkingHours(new DateTime('2021-03-05 08:59:00'));
+        //assert
+        $this->assertEquals(false, $isWorkingHours);
+    }
 }
 ?>
