@@ -210,18 +210,18 @@ final class DueDateCalculatorTest extends TestCase
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
-        $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime('2021-03-05 15:10:00'), 5);
+        $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime('2021-03-04 15:10:00'), 5);
         //assert
-        $this->assertEquals(new DateTime('2021-03-06 12:10:00'), $resolvedDateTime);
+        $this->assertEquals(new DateTime('2021-03-05 12:10:00'), $resolvedDateTime);
     }
     
     public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateTomorrow2_ShoulReturnDateTime(){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
-        $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime('2021-03-05 14:12:00'), 16);
+        $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime('2021-03-03 14:12:00'), 16);
         //assert
-        $this->assertEquals(new DateTime('2021-03-07 14:12:00'), $resolvedDateTime);
+        $this->assertEquals(new DateTime('2021-03-05 14:12:00'), $resolvedDateTime);
     }
 
     public static function calculateDueDateTestData2_Workdays()
@@ -243,12 +243,29 @@ final class DueDateCalculatorTest extends TestCase
         $dueDateCalculator = new DueDateCalculator();
         //act
         $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime($submitDateTime), $turnaruondTime);
-        
         //assert
         $this->assertEquals(new DateTime($result), $resolvedDateTime);
     }
 
+    public static function calculateDueDateTestData2_WorkdaysAfterWeekends()
+    {
+        return array(
+            array('2021-03-04 09:00:00', 16 , '2021-03-08 09:00:00'),
+            array('2021-03-05 10:00:00', 8 , '2021-03-08 10:00:00')
+        );
+    }
 
+    /**
+     * @dataProvider calculateDueDateTestData2_WorkdaysAfterWeekends 
+    */
+    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ShoulReturnWorkdaysAfterWeekends(string $submitDateTime, int $turnaruondTime, string $result){
+        //prepare
+        $dueDateCalculator = new DueDateCalculator();
+        //act
+        $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime($submitDateTime), $turnaruondTime);
+        //assert
+        $this->assertEquals(new DateTime($result), $resolvedDateTime);
+    }
 
     public function testHowManyHoursLeft_WhenTimeBetween917_ShouldReturnInt(){
         //prepare

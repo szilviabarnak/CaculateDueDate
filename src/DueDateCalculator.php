@@ -51,14 +51,7 @@ final class DueDateCalculator{
                     $turnaruondTime_DateInterval = new DateInterval('P0Y0M'.$days.'DT0H0M0S');
                     $submitDateTime_Ymd = $submitDateTime;
                 }else{
-                    print("turnaruondTime:".$turnaruondTime." ");
-                    print("howManyHoursLeft:".$howManyHoursLeft." ");
-                    
                     $remaining = ($turnaruondTime-$howManyHoursLeft)%8;
-                    //                 10       -     7
-                    print("remaining:".$remaining." ");
-                    print("days:".$days." ");
-                    
                     $remaining--;
                     $turnaruondTime_DateInterval = new DateInterval('P0Y0M'.$days.'DT'.$remaining.'H0M0S');
                     $submitDateTime_Ymd = new DateTime($submitDateTime->format('Y-m-d 09:i:s'));
@@ -67,8 +60,15 @@ final class DueDateCalculator{
                 
                 
                 $submitDateTime_Ymd = $submitDateTime_Ymd->add($turnaruondTime_DateInterval);
-                print_r($submitDateTime_Ymd);
+                if(!$this->isWorkingDay($submitDateTime_Ymd)){
+                    $submitDateTime_Ymd->add(new DateInterval('P0Y0M1DT0H0M0S'));
+                    if(!$this->isWorkingDay($submitDateTime_Ymd)){
+                        $submitDateTime_Ymd->add(new DateInterval('P0Y0M1DT0H0M0S'));
+                    }
+                }
                 return $submitDateTime_Ymd;
+                
+                
             }
             
         }else{
