@@ -1,7 +1,6 @@
 <?php
 final class DueDateCalculator{
     function isWorkingDay(DateTime $datetime){
-        //$day = $datetime->format('N');
         $julian_date = unixtojd($datetime->getTimestamp());
         $julian_dayofweek = jddayofweek($julian_date, 0);
 
@@ -12,7 +11,6 @@ final class DueDateCalculator{
         }
     }
 
-    //17:01-re hibás!
     function isWorkingHours(DateTime $datetime){
         if($this->isWorkingDay($datetime)){    
             $hour = $datetime->format('G');
