@@ -34,7 +34,6 @@ final class DueDateCalculator{
         if($this->isWorkingHours($submitDateTime)){
             $resolvedDateTime = new DateTime();
             $howManyHoursLeft = $this->howManyHoursLeft($submitDateTime);
-            print_r($howManyHoursLeft);
             if($turnaruondTime <= $howManyHoursLeft){
                 $turnaruondTime_DateInterval = new DateInterval('P0Y0M0DT'.$turnaruondTime.'H0M0S');
                 $resolvedDateTime = $submitDateTime->add($turnaruondTime_DateInterval);
