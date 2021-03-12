@@ -1,28 +1,25 @@
 <?php
 final class DueDateCalculator{
-    function isWorkingDay(DateTime $datetime){
+    private function isWorkingDay(DateTime $datetime){
         $julian_date = unixtojd($datetime->getTimestamp());
         $julian_dayofweek = jddayofweek($julian_date, 0);
-
         if($julian_dayofweek > 0 && $julian_dayofweek < 6){
             return true;
-        }else{
+        }
+        return false;
+    }
+
+    private function isWorkingHours(DateTime $datetime){
+        if($this->isWorkingDay($datetime)){
+            $biz = array_map('intval', explode(":", $datetime->format("H:i:s")));
+            $dateToSec = $biz[0]*60*60 + $biz[1]*60 + $biz[2];
+            if($dateToSec >= 9*60*60 && $dateToSec < 17*60*60){
+                return true;
+            }
             return false;
         }
     }
-
-    function isWorkingHours(DateTime $datetime){
-        if($this->isWorkingDay($datetime)){    
-            $hour = $datetime->format('G');
-            if($hour >= 9 && $hour <= 16){
-                return true;
-            }else{
-                return false;
-            }
-        }
-
-    }
-    function howManyHoursLeft(DateTime $submitDateTime){
+    private function howManyHoursLeft(DateTime $submitDateTime){
         if($this->isWorkingHours($submitDateTime)){
             $hour = (int)$submitDateTime->format('G');
             return 16 - $hour;
@@ -30,7 +27,7 @@ final class DueDateCalculator{
             return 0;
         }
     }
-    function calculateDueDate(DateTime $submitDateTime, int $turnaruondTime){
+    public function calculateDueDate(DateTime $submitDateTime, int $turnaruondTime){
         if($this->isWorkingHours($submitDateTime)){
             $resolvedDateTime = new DateTime();
             $howManyHoursLeft = $this->howManyHoursLeft($submitDateTime);
@@ -68,9 +65,9 @@ final class DueDateCalculator{
                 
             }
             
-        }else{
-            return false;
         }
+        return false;
+        
         
     }
 }
