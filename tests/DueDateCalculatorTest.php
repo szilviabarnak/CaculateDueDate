@@ -15,7 +15,7 @@ final class DueDateCalculatorTest extends TestCase
     public static function calculateDueDateTestData_Workdays()
     {
         return array(
-           // array('2021-03-09 13:59:00', 3 , '2021-03-09 16:59:00')//,
+            array('2021-03-09 13:59:00', 3 , '2021-03-09 16:59:00'),
             array('2021-03-08 09:00:00', 2 , '2021-03-08 11:00:00')
         );
     }
