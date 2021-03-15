@@ -1,74 +1,57 @@
 <?php
 final class DueDateCalculator{
+    private function dateToSec(DateTime $datetime){
+        $biz = array_map('intval', explode(":", $datetime->format("H:i:s")));
+        return $biz[0]*60*60 + $biz[1]*60 + $biz[2];
+    }
     private function isWorkingDay(DateTime $datetime){
         $julian_date = unixtojd($datetime->getTimestamp());
         $julian_dayofweek = jddayofweek($julian_date, 0);
-        if($julian_dayofweek > 0 && $julian_dayofweek < 6){
-            return true;
-        }
-        return false;
+        return ($julian_dayofweek > 0 && $julian_dayofweek < 6);
     }
 
     private function isWorkingHours(DateTime $datetime){
-        if($this->isWorkingDay($datetime)){
-            $biz = array_map('intval', explode(":", $datetime->format("H:i:s")));
-            $dateToSec = $biz[0]*60*60 + $biz[1]*60 + $biz[2];
-            if($dateToSec >= 9*60*60 && $dateToSec < 17*60*60){
-                return true;
-            }
+        if(!$this->isWorkingDay($datetime)){
             return false;
         }
+        $dateToSec = $this->dateToSec($datetime);
+        return ($dateToSec >= 9*60*60 && $dateToSec <= 17*60*60);
+        
     }
-    private function howManyHoursLeft(DateTime $submitDateTime){
-        if($this->isWorkingHours($submitDateTime)){
-            $hour = (int)$submitDateTime->format('G');
-            return 16 - $hour;
-        }else{
-            return 0;
+    private function howManyTimeLeft(DateTime $datetime){
+        if($this->isWorkingHours($datetime)){
+            return 17*60*60 - $this->dateToSec($datetime);
         }
+        return 0;
     }
     public function calculateDueDate(DateTime $submitDateTime, int $turnaruondTime){
-        if($this->isWorkingHours($submitDateTime)){
-            $resolvedDateTime = new DateTime();
-            $howManyHoursLeft = $this->howManyHoursLeft($submitDateTime);
-            if($turnaruondTime <= $howManyHoursLeft){
-                $turnaruondTime_DateInterval = new DateInterval('P0Y0M0DT'.$turnaruondTime.'H0M0S');
-                $resolvedDateTime = $submitDateTime->add($turnaruondTime_DateInterval);
-                return $resolvedDateTime;
-            }else{
-                $days = floor($turnaruondTime/8);
-                if($days == 0){
-                    //át kell billeneteni a napot
-                    $days++;
-                }
-                if($turnaruondTime%8 == 0){
-                    $turnaruondTime_DateInterval = new DateInterval('P0Y0M'.$days.'DT0H0M0S');
-                    $submitDateTime_Ymd = $submitDateTime;
-                }else{
-                    $remaining = ($turnaruondTime-$howManyHoursLeft)%8;
-                    $remaining--;
-                    $turnaruondTime_DateInterval = new DateInterval('P0Y0M'.$days.'DT'.$remaining.'H0M0S');
-                    $submitDateTime_Ymd = new DateTime($submitDateTime->format('Y-m-d 09:i:s'));
-                }
-                
-                
-                
-                $submitDateTime_Ymd = $submitDateTime_Ymd->add($turnaruondTime_DateInterval);
-                if(!$this->isWorkingDay($submitDateTime_Ymd)){
-                    $submitDateTime_Ymd->add(new DateInterval('P0Y0M1DT0H0M0S'));
-                    if(!$this->isWorkingDay($submitDateTime_Ymd)){
-                        $submitDateTime_Ymd->add(new DateInterval('P0Y0M1DT0H0M0S'));
-                    }
-                }
-                return $submitDateTime_Ymd;
-                
-                
-            }
-            
+        if(!$this->isWorkingHours($submitDateTime)){
+            throw new Exception("Nem munkaido");
         }
-        return false;
+        $howManyTimeLeft = $this->howManyTimeLeft($submitDateTime);
         
+        $turnaruondTimeInSec = $turnaruondTime*60*60;
         
+
+        $backToMorning = $turnaruondTimeInSec + 8*60*60 - $howManyTimeLeft;
+        $days = floor($backToMorning/(8*60*60));
+        
+        $remainingTime = $backToMorning%(8*60*60);
+        $remainingTimeF = $backToMorning%(8*60*60) + $days*24*60*60;
+        
+        $resolvedDateTime = new DateTime($submitDateTime->format('Y-m-d 09:00:00'));
+      
+        
+        $turnaruondTime_DateInterval = new DateInterval('P0Y0M0DT0H0M'.$remainingTimeF.'S');
+        $resolvedDateTime->add($turnaruondTime_DateInterval);
+        
+        if(!$this->isWorkingDay($resolvedDateTime)){
+            $resolvedDateTime->add(new DateInterval('P0Y0M1DT0H0M0S'));
+            if(!$this->isWorkingDay($resolvedDateTime)){
+                $resolvedDateTime->add(new DateInterval('P0Y0M1DT0H0M0S'));
+            }
+        }
+        return $resolvedDateTime;
     }
 }
 ?>

@@ -15,11 +15,10 @@ final class DueDateCalculatorTest extends TestCase
     public static function calculateDueDateTestData_Workdays()
     {
         return array(
-            array('2021-03-09 13:59:00', 3 , '2021-03-09 16:59:00'),
+           // array('2021-03-09 13:59:00', 3 , '2021-03-09 16:59:00')//,
             array('2021-03-08 09:00:00', 2 , '2021-03-08 11:00:00')
         );
     }
-
     /**
      * @dataProvider calculateDueDateTestData_Workdays 
     */
@@ -44,17 +43,21 @@ final class DueDateCalculatorTest extends TestCase
     /**
      * @dataProvider calculateDueDateTestData_Weekends 
     */
-    public function testCalculateDueDateWithParameters_WhenDateIsWeekend_ShoulReturnFalse(string $submitDateTime, int $turnaruondTime, string $result){
+   public function testCalculateDueDateWithParameters_WhenDateIsWeekend_ShouldThrowException(string $submitDateTime, int $turnaruondTime, string $result){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
-        $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime($submitDateTime), $turnaruondTime);
         
-        //assert
-        $this->assertEquals(false, $resolvedDateTime);
+        $emess = null;
+        try {
+            $resolvedDateTime = $dueDateCalculator->calculateDueDate(new DateTime($submitDateTime), $turnaruondTime);
+        } catch (Exception $e) { 
+            $emess = $e->getMessage();
+        }
+        $this->assertEquals($emess, 'Nem munkaido');
     }
     
-    public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateToday_ShoulReturnDateTime(){
+    public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateToday_ShouldReturnDateTime(){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
@@ -62,7 +65,8 @@ final class DueDateCalculatorTest extends TestCase
         //assert
         $this->assertEquals(new DateTime('2021-03-05 14:00:00'), $resolvedDateTime);
     }
-    public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateTomorrow_ShoulReturnDateTime(){
+///
+   public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateTomorrow_ShouldReturnDateTime(){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
@@ -70,7 +74,7 @@ final class DueDateCalculatorTest extends TestCase
         //assert
         $this->assertEquals(new DateTime('2021-03-05 12:10:00'), $resolvedDateTime);
     }
-    
+ 
     public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateTomorrow2_ShoulReturnDateTime(){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
@@ -86,6 +90,8 @@ final class DueDateCalculatorTest extends TestCase
             array('2021-03-02 09:59:00', 10 , '2021-03-03 11:59:00'),
             array('2021-03-02 09:59:00', 18 , '2021-03-04 11:59:00'),
             array('2021-03-09 13:59:00', 3 , '2021-03-09 16:59:00'),
+          
+          array('2021-03-09 16:58:00', 3 , '2021-03-10 11:58:00'),
             array('2021-03-09 16:59:00', 3 , '2021-03-10 11:59:00'),
             array('2021-03-08 09:00:00', 2 , '2021-03-08 11:00:00')
         );
