@@ -3,7 +3,7 @@ use PHPUnit\Framework\TestCase;
 
 final class DueDateCalculatorTest extends TestCase
 {
-    public function testcalculateDueDate_WhenDateIsWeekday_ShoulReturnDateTime(){
+    public function testcalculateDueDate_WhenDateIsWeekday_ShouldReturnDateTime(){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
@@ -22,7 +22,7 @@ final class DueDateCalculatorTest extends TestCase
     /**
      * @dataProvider calculateDueDateTestData_Workdays 
     */
-    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ShoulReturnDateTime(string $submitDateTime, int $turnaruondTime, string $result){
+    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ShouldReturnDateTime(string $submitDateTime, int $turnaruondTime, string $result){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
@@ -75,7 +75,7 @@ final class DueDateCalculatorTest extends TestCase
         $this->assertEquals(new DateTime('2021-03-05 12:10:00'), $resolvedDateTime);
     }
  
-    public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateTomorrow2_ShoulReturnDateTime(){
+    public function testcalculateDueDate_WhenDateIsWeekday_ResolvedDateTomorrow2_ShouldReturnDateTime(){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
@@ -100,7 +100,7 @@ final class DueDateCalculatorTest extends TestCase
     /**
      * @dataProvider calculateDueDateTestData2_Workdays 
     */
-    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ResolvedDateTomorrow2_ShoulReturnDateTime(string $submitDateTime, int $turnaruondTime, string $result){
+    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ResolvedDateTomorrow2_ShouldReturnDateTime(string $submitDateTime, int $turnaruondTime, string $result){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
@@ -120,7 +120,7 @@ final class DueDateCalculatorTest extends TestCase
     /**
      * @dataProvider calculateDueDateTestData2_WorkdaysAfterWeekends 
     */
-    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ShoulReturnWorkdaysAfterWeekends(string $submitDateTime, int $turnaruondTime, string $result){
+    public function testCalculateDueDateWithParameters_WhenDateIsWeekday_ShouldReturnWorkdaysAfterWeekends(string $submitDateTime, int $turnaruondTime, string $result){
         //prepare
         $dueDateCalculator = new DueDateCalculator();
         //act
